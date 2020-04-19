@@ -2,9 +2,7 @@ package com.example.gotrack.userInterface.fragments
 
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gotrack.R
 import com.example.gotrack.base.BaseFragment
@@ -18,13 +16,11 @@ import kotlinx.android.synthetic.main.vehicle_detail_fragment.*
 
 
 class AllVehicleFragment : BaseFragment(), AdpterCallBack {
-
     private lateinit var fragChangeListener: FragCallBack
     val allVehcileData = ArrayList<VehicleDetails>()
     var movingVehcileList: ArrayList<VehicleDetails> = ArrayList()
     var idleVehicleList: ArrayList<VehicleDetails> = ArrayList()
     private var listSorted: Boolean = false
-
 
     private val vehicleDataAdapter by lazy {
         AllVehicleAdapter(allVehcileData, this)
@@ -40,19 +36,18 @@ class AllVehicleFragment : BaseFragment(), AdpterCallBack {
     }
 
     override fun viewInitialization(view: View?) {
-        if(MainActivity.count == 0){
+        if (MainActivity.count == 0) {
             showLoadingState(true)
             Handler().postDelayed({
                 showLoadingState(false)
                 setUpView(view)
                 vehicleSorter()
-            }, 1000)}
-        else{
+            }, 1000)
+        } else {
             showLoadingState(false)
             setUpView(view)
             vehicleSorter()
         }
-
     }
 
     private fun vehicleSorter() {
@@ -114,12 +109,10 @@ class AllVehicleFragment : BaseFragment(), AdpterCallBack {
         fragChangeListener.onFragmentChange(VehicleLocationFragment.getInstance(itemPosition), VehicleLocationFragment.TAG)
     }
 
-
     companion object {
         val TAG = AllVehicleFragment::class.java.name
         fun newInstance(): AllVehicleFragment {
             return AllVehicleFragment()
         }
     }
-
 }

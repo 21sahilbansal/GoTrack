@@ -3,10 +3,7 @@ package com.example.gotrack.userInterface.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import com.example.gotrack.R
 import com.example.gotrack.base.BaseFragment
 import com.example.gotrack.model.AllVehicle
@@ -18,18 +15,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import kotlinx.android.synthetic.main.bottom_sheet.*
-import kotlinx.android.synthetic.main.item_vehicle_detail.*
 import kotlinx.android.synthetic.main.vehicle_location_fragment.*
-import java.util.*
 
 
 class VehicleLocationFragment : BaseFragment() {
-    var googleMap: GoogleMap? = null
-    var marker: Marker? = null
+    private var googleMap: GoogleMap? = null
+    private var marker: Marker? = null
     var vehicleDetails: VehicleDetails? = null
-    private var sheetBehavior: BottomSheetBehavior<*>?  = null
+    private var sheetBehavior: BottomSheetBehavior<*>? = null
     var mapType = true
 
     override val fragmentLayoutId: Int
@@ -39,23 +33,14 @@ class VehicleLocationFragment : BaseFragment() {
     override fun viewInitialization(view: View?) {
         sheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout)
         MainActivity.count = 1
-        var position: Int? = arguments?.let { it[VEHICLE_POSITION] as Int }
+        val position: Int? = arguments?.let { it[VEHICLE_POSITION] as Int }
         MainActivity.allVehicleObject?.let {
-            var allVehicleObject = it as AllVehicle
+            val allVehicleObject = it as AllVehicle
             allVehicleObject.allVehicle?.let { it -> vehicleDetails = it[position!!] }
         }
         initMap()
         vehicleDetails?.let { addDataToBottomSheet() }
 
-        (sheetBehavior as BottomSheetBehavior<CardView>?)?.setBottomSheetCallback(object : BottomSheetCallback(){
-            override fun onSlide(p0: View, p1: Float) {
-
-            }
-
-            override fun onStateChanged(p0: View, p1: Int) {
-            }
-
-        })
     }
 
     private fun addDataToBottomSheet() {
@@ -63,13 +48,23 @@ class VehicleLocationFragment : BaseFragment() {
         vehicle_No_tv1.text = vehicleDetails?.vehicleId
         vehicle_Date_tv1.text = vehicleDetails?.date
         vehicle_location_tv1.text = vehicleDetails?.location
-        if(vehicleDetails?.moving == "1"){
-            vehicle_status_tv1.text = "Moving"
-        }
-        else{
-            vehicle_status_tv1.text = "Idle"
+        if (vehicleDetails?.moving == "1") {
+            vehicle_status_tv1.text = getString(R.string.vehicle_moving)
+        } else {
+            vehicle_status_tv1.text = getString(R.string.vehicle_idle)
         }
         vehicle_Extra_tv1.text = vehicleDetails?.extraInfo
+
+        attBottomSheetListener()
+    }
+
+    private fun attBottomSheetListener() {
+        bottom_sheet_opener_view.setOnClickListener {
+            if (sheetBehavior?.state == BottomSheetBehavior.STATE_COLLAPSED)
+                sheetBehavior?.setState(BottomSheetBehavior.STATE_EXPANDED)
+            else if (sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED)
+                sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
     }
 
 
@@ -82,10 +77,9 @@ class VehicleLocationFragment : BaseFragment() {
 
     private fun setupMaps(googleMap: GoogleMap) {
         this.googleMap = googleMap
-        var latitude = vehicleDetails?.lati
-        var longtitude = vehicleDetails?.long
-        var location = vehicleDetails?.location
-        var latLng: LatLng? = null
+        val latitude = vehicleDetails?.lati
+        val longtitude = vehicleDetails?.long
+        var latLng: LatLng?
         latitude?.let { it ->
             longtitude?.let { it1 ->
                 latLng = LatLng(it, it1)
@@ -96,26 +90,25 @@ class VehicleLocationFragment : BaseFragment() {
                 setInfoWidow()
             }
         }
-
         setMapDisplayType()
-
-
     }
 
     private fun setMapDisplayType() {
-        button_map_view.setOnClickListener{
+        this.button_map_view.setOnClickListener {
             googleMap?.let {
                 if (mapType) {
                     setSatelliteView(googleMap)
                     button_map_view.setImageResource(R.drawable.ic_map_view)
                     mapType = false
-                } else  {
+                } else {
                     setNormalView(googleMap)
                     button_map_view.setImageResource(R.drawable.ic_satellite_view)
                     mapType = true
                 }
             }
-    }}
+        }
+    }
+
     private fun setSatelliteView(googleMap: GoogleMap?) {
         googleMap?.let {
             it.mapType = GoogleMap.MAP_TYPE_HYBRID
@@ -153,7 +146,6 @@ class VehicleLocationFragment : BaseFragment() {
                 vehicleDate.text = vehicleDetails?.date
                 return infoView
             }
-
             override fun getInfoContents(marker: Marker): View? {
                 return null
             }
@@ -172,7 +164,6 @@ class VehicleLocationFragment : BaseFragment() {
         val padding = (height * 0.20).toInt() // offset from edges of the map 10% of screen
         val cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding)
         googleMap?.animateCamera(cu)
-       // googleMap?.setMaxZoomPreference(20f)
     }
 
     fun addMarker(latLng: LatLng, googleMap: GoogleMap?): Marker? {
@@ -186,9 +177,7 @@ class VehicleLocationFragment : BaseFragment() {
     }
 
     override fun showLoadingState(loading: Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
 
     companion object {
         val TAG = VehicleLocationFragment::class.java.name
@@ -199,8 +188,6 @@ class VehicleLocationFragment : BaseFragment() {
             arg.putInt(VEHICLE_POSITION, position)
             fragment.arguments = arg
             return fragment
-
         }
-
     }
 }

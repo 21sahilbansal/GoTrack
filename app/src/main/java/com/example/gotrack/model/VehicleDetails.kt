@@ -35,5 +35,4 @@ class VehicleDetails {
     var mobile: String? = null
     @SerializedName("Device")
     var device: String? = null
-
 }

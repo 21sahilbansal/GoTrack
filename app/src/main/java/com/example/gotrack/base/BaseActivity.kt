@@ -25,6 +25,5 @@ abstract class BaseActivity : AppCompatActivity() {
                     .commit()
         }
     }
-
     protected abstract val layoutRes: Int
 }
